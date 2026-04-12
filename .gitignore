@@ -1,0 +1,16 @@
+# Node.js
+/api/node_modules
+
+# App Flutter
+/app_quizz/build
+/app_quizz/.dart_tool
+/app_quizz/.idea
+/app_quizz/.packages
+/app_quizz/pubspec.yaml
+/app_quizz/linux
+/app_quizz/windows
+/app_quizz/macos
+/app_quizz/web
+
+# Variáveis de ambiente
+/.env

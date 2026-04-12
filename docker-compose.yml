@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  quizz_db:
+    image: postgres:15-alpine
+    container_name: quizz_postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./api/db/db_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./api/db/db_data.sql:/docker-entrypoint-initdb.d/02_data.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  quizz_api:
+    build: . 
+    container_name: quizz_node_api
+    restart: always
+    ports:
+      - "${API_PORT}:${API_PORT}" 
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - PORT=${API_PORT}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      quizz_db:
+        condition: service_healthy 
+
+volumes:
+  pgdata:
