@@ -1,5 +1,4 @@
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+require('dotenv').config();
 
 const express = require('express');
 const routes = require('./routes');
@@ -9,6 +8,8 @@ app.use(express.json());
 
 app.use('/api', routes);
 
-app.listen(process.env.API_PORT, () => {
-    console.log(`🚀 API do Quizz rodando na porta:${process.env.API_PORT}`);
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`✅ API do Quizz rodando na porta: ${PORT}`);
 });

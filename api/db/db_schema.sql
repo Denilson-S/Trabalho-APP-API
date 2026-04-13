@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS users (
     user_name VARCHAR(100) NOT NULL,
     user_email VARCHAR(100) NOT NULL UNIQUE,
     user_password VARCHAR(100) NOT NULL,
+    user_refresh_token VARCHAR(500) NULL,
     user_score INT DEFAULT 0
 );
 

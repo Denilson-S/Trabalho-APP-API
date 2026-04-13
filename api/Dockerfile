@@ -1,19 +1,20 @@
-FROM node:14
+# Usamos a versão 20 (atual) na variante 'alpine', que é super leve e rápida
+FROM node:20-alpine
 
-# Set the working directory
+# Define a pasta de trabalho
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
+# Copia os arquivos de dependência
 COPY package*.json ./
 
-# Install dependencies
+# Instala as dependências
 RUN npm install
 
-# Copy the rest of the application code
+# Copia o restante do código da sua API para dentro do contêiner
 COPY . .
 
-# Expose the API port
+# Expõe a porta
 EXPOSE 5000
 
-# Start the application
-CMD ["node", "api/index.js"]
+# Inicia a aplicação apontando para o arquivo correto!
+CMD ["node", "index.js"]
