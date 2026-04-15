@@ -19,6 +19,11 @@ class RegisterPageState extends State<RegisterPage> {
   final TextEditingController _passwordController = TextEditingController();
 
   bool _isObscure = true;
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isObscure = !_isObscure;
+    });
+  }
 
   void _login() {
     if (_formKey.currentState!.validate()) {
@@ -36,6 +41,10 @@ class RegisterPageState extends State<RegisterPage> {
     );
   }
 
+  void _navigateToLogin() {
+    Navigator.pushNamed(context, '/');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,104 +52,40 @@ class RegisterPageState extends State<RegisterPage> {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 128.0, bottom: 48.0),
-          child: Column(
-            children: [
-              Text('Quiz Master', style: AppStyles.titleLarge),
-              Text('Test your knowledge and challenge your friends.', style: AppStyles.caption),
-              const Spacer(),
-              Card(
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      children: [
-                        Text('Register', style: AppStyles.titleMedium),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 40, bottom: 16, left: 16, right: 16),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: _nameController,
-                                  decoration: const InputDecoration(hintText: 'Name', prefixIcon: Icon(LucideIcons.user)),
-                                  validator: validateName,
-                                ),
-                                SizedBox(height: 12),
-                                TextFormField(
-                                  controller: _emailController,
-                                  decoration: const InputDecoration(hintText: 'Email', prefixIcon: Icon(LucideIcons.mail)),
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: validateEmail,
-                                ),
-                                SizedBox(height: 12),
-                                TextFormField(
-                                  controller: _passwordController,
-                                  decoration: InputDecoration(
-                                    hintText: 'Senha',
-                                    prefixIcon: Icon(LucideIcons.lock),
-                                    suffixIcon: Icon(
-                                      _isObscure ? LucideIcons.eye : LucideIcons.eyeOff,
-                                    ),
-                                  ),
-                                  obscureText: _isObscure,
-                                  validator: validatePassword,
-                                ),
-                                const SizedBox(height: 16.0),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: FilledButton(
-                                    onPressed: _login,
-                                    child: const Text('Create Account'),
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                CustomDivider(text: 'or login with'),
-                                const SizedBox(height: 8),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: OutlinedButton(
-                                    onPressed: _googleLogin,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        SvgPicture.asset(
-                                          'assets/svgs/logo_google.svg',
-                                          height: 24.0,
-                                          width: 24.0,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text('Google', style: AppStyles.googleButton),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text('Already have an account? ', style: AppStyles.caption,),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(context, '/');
-                                      },
-                                      child: Text('Login', style: AppStyles.captionActive,),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 128.0, bottom: 48.0),
+              child: Column(
+                children: [
+                  Text('Quiz Master', style: AppStyles.titleLarge),
+                  Text('Test your knowledge and challenge your friends.', style: AppStyles.caption, textAlign: TextAlign.center),
+                ],
               ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(overscroll: false),
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 96.0, bottom: 24.0),
+                  child: CardLogin(
+                    title: 'Register',
+                    formKey: _formKey,
+                    children: [
+                      SimpleInput(controller: _nameController, hintText: 'Name', prefixIcon: LucideIcons.user, keyboardType: TextInputType.name, validator: validateName),
+                      SimpleInput(controller: _emailController, keyboardType: TextInputType.emailAddress, hintText: 'Email', prefixIcon: LucideIcons.mail, validator: validateEmail),
+                      ObscureInput(controller: _passwordController, keyboardType: TextInputType.visiblePassword, hintText: 'Password', prefixIcon: LucideIcons.lock, validator: validatePassword, suffixIcon: _isObscure ? LucideIcons.eye : LucideIcons.eyeOff, isObscure: _isObscure, onToggle: _togglePasswordVisibility),
+                      PrimaryButton(onPressed: _login, text: 'Create Account',),
+                      CustomDivider(text: 'or login with'),
+                      SecondaryButton(onPressed: _googleLogin, child: SvgText(path: 'assets/svgs/logo_google.svg', text: 'Google')),
+                      ActionText(simpleText: 'Already have an account? ', actionText: 'Login', onPressed: _navigateToLogin)
+                    ]
+                  ),
+                )
+              )
+            )
+          ],
         ),
       ),
     );

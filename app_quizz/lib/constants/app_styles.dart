@@ -27,12 +27,13 @@ class AppStyles {
   );
 
   static final TextStyle caption = GoogleFonts.inter(
-    fontSize: 12,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
     color: Colors.grey[600],
   );
 
   static final TextStyle captionActive = GoogleFonts.inter(
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.bold,
     color: AppColors.primary,
   );

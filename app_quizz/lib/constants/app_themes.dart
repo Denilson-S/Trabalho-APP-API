@@ -82,6 +82,8 @@ class AppThemes {
         borderRadius: BorderRadius.circular(32),
         borderSide: const BorderSide(color: AppColors.onError, width: 2),
       ),
+
+      errorStyle: AppStyles.caption.copyWith(color: AppColors.onError),
     ),
 
     cardTheme: CardThemeData(

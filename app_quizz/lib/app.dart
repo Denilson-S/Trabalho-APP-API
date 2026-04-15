@@ -1,7 +1,6 @@
 import './constants/app_themes.dart';
 import 'package:flutter/material.dart';
 import './routes.dart';
-import 'package:app_quizz/pages/views/login_page.dart';
 
 final ValueNotifier<ThemeMode> themeMode = ValueNotifier(ThemeMode.system);
 

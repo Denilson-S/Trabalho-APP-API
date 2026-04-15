@@ -8,7 +8,6 @@ class AppRoutes {
   static const String home = '/home';
   static const String register = '/register';
 
-  // 2. Crie o mapa de rotas centralizado
   static Map<String, WidgetBuilder> get routes {
     return {
       login: (context) => const LoginPage(),
