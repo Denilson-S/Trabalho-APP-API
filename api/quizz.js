@@ -77,7 +77,9 @@ const saveQuizHistory = async (req, res) => {
             [score, userId]
         );
 
-        res.status(201).json({ message: 'Histórico salvo com sucesso!', history: result.rows[0] });
+        const user = await pool.query('SELECT * FROM users WHERE user_id = $1', [userId]);
+
+        res.status(201).json({ message: 'Histórico salvo com sucesso!', user_score: user.rows[0].user_score, history: result.rows[0] });
     } catch (error) {
         console.error("Erro ao salvar histórico:", error);
         res.status(500).json({ error: 'Erro ao registrar pontuação.' });
