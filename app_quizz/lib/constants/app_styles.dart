@@ -12,7 +12,12 @@ class AppStyles {
   static final TextStyle titleMedium = GoogleFonts.inter(
     fontSize: 22,
     fontWeight: FontWeight.bold,
-    // color: AppColors.primaryText,
+  );
+
+  static final TextStyle titleSmall = GoogleFonts.inter(
+    fontSize: 18,
+    fontWeight: FontWeight.w500,
+    color: AppColors.white,
   );
 
   static final TextStyle googleButton = GoogleFonts.inter(
@@ -27,15 +32,21 @@ class AppStyles {
   );
 
   static final TextStyle caption = GoogleFonts.inter(
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
-    color: Colors.grey[600],
+    color: AppColors.greyCaption,
   );
 
   static final TextStyle captionActive = GoogleFonts.inter(
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.bold,
     color: AppColors.primary,
+  );
+
+  static final TextStyle option = GoogleFonts.inter(
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    color: AppColors.greyCaption,
   );
 }
 
@@ -46,6 +57,12 @@ class AppColors {
   static const Color grey1 = Color(0xFF8C8E9C);
   static const Color grey2 = Color(0xFF12141D);
   static const Color grey3 = Color(0xFF10111A);
+  static const Color greyCaption = Color(0xFF757575);
+  static const Color greyButton = Color.fromARGB(255, 48, 48, 70);
+
+  static const Color yellow = Color(0xFFE17100);
+  static const Color green = Color(0xFF009966);
+  static const Color avatarBackground = Color.fromARGB(255, 43, 39, 116);
 
   static const Color surfaceInput = Color(0xFF292B3D);
   static const Color textInput = Color(0xFF8C8E9C);
