@@ -1,58 +1,56 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app_quizz/models/player_model.dart';
+import 'package:app_quizz/models/settings_model.dart';
+import 'package:app_quizz/storages/local_storage.dart';
+import 'package:isar/isar.dart';
 
 class UserStorage {
-  Future<void> saveUserData(Map<String, dynamic> userData) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('user_prefs', userData.entries.map((e) => '${e.key}:${e.value}').toList());
-  }
+  final _localStorage = LocalStorage();
 
-  Future<void> saveRefreshToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('refresh_token', token);
-  }
-
-  Future<void> saveAccessToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('access_token', token);
-  }
-
+  // Secure Storage (Tokens)
   Future<void> saveTokens(String accessToken, String refreshToken) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('access_token', accessToken);
-    await prefs.setString('refresh_token', refreshToken);
-  }
-
-  Future<Map<String, dynamic>?> getUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userDataList = prefs.getStringList('user_prefs');
-
-    if (userDataList != null) {
-      return Map.fromEntries(userDataList.map((e) {
-        final parts = e.split(':');
-        return MapEntry(parts[0], parts[1]);
-      }));
-    }
-    return null;
-  }
-
-  Future<String?> getRefreshToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('refresh_token');
+    await _localStorage.writeSecure('access_token', accessToken);
+    await _localStorage.writeSecure('refresh_token', refreshToken);
   }
 
   Future<String?> getAccessToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token');
+    return await _localStorage.readSecure('access_token');
   }
 
-  Future<void> deleteUserData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('user_prefs');
+  Future<String?> getRefreshToken() async {
+    return await _localStorage.readSecure('refresh_token');
   }
 
   Future<void> deleteTokens() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('refresh_token');
-    await prefs.remove('access_token');
+    await _localStorage.deleteSecure('access_token');
+    await _localStorage.deleteSecure('refresh_token');
+  }
+
+  // Isar Storage (Dados do usuario)
+  Future<void> saveUserData(PlayerModel player) async {
+    await _localStorage.writeTxn(() async {
+      await _localStorage.isar.playerModels.put(player);
+    });
+  }
+
+  Future<PlayerModel?> getUserData() async {
+    return await _localStorage.isar.playerModels.where().findFirst();
+  }
+
+  Future<void> deleteUserData() async {
+    await _localStorage.writeTxn(() async {
+      await _localStorage.isar.playerModels.clear();
+    });
+  }
+
+  // Isar Storage (Configurações)
+  Future<void> saveSettings(SettingsModel settings) async {
+    await _localStorage.writeTxn(() async {
+      await _localStorage.isar.settingsModels.put(settings);
+    });
+  }
+
+  Future<SettingsModel> getSettings() async {
+    final settings = await _localStorage.isar.settingsModels.get(0);
+    return settings ?? SettingsModel();
   }
 }

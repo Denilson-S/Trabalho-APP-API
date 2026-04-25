@@ -36,7 +36,7 @@ const login = async (req, res) => {
         res.status(200).json({ 
             accessToken, 
             refreshToken, 
-            user: { name: user.user_name, email: user.user_email } 
+            user: { name: user.user_name, email: user.user_email, score: user.user_score } 
         });
     } catch (error) {
         res.status(500).json({ error: `Erro ao realizar login. ${error.message}` });
@@ -67,7 +67,7 @@ const register = async (req, res) => {
     res.status(201).json({
         accessToken,
         refreshToken,
-        user: { name: newUser.rows[0].user_name, email: newUser.rows[0].user_email }
+        user: { name: newUser.rows[0].user_name, email: newUser.rows[0].user_email, score: newUser.rows[0].user_score }
     });
 };
 

@@ -21,11 +21,9 @@ CREATE TABLE IF NOT EXISTS quizzes (
 
 CREATE TABLE IF NOT EXISTS history (
     history_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
-    quiz_id INT REFERENCES quizzes(quiz_id),
-    start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    end_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    quant_resp INT NOT NULL,
-    quant_correct INT NOT NULL,
+    user_id INT NOT NULL REFERENCES users(user_id),
+    quiz_id INT NOT NULL REFERENCES quizzes(quiz_id),
+    start_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    end_time TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     score INT NOT NULL
 );

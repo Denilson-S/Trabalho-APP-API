@@ -22,3 +22,13 @@ subprojects {
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
+
+subprojects {
+    plugins.withId("com.android.library") {
+        val androidExt = extensions.findByName("android") as? com.android.build.gradle.BaseExtension
+        if (androidExt != null && androidExt.namespace == null) {
+            val groupStr = project.group.toString()
+            androidExt.namespace = if (groupStr.isNotEmpty()) groupStr else "dev.flutter.plugin.${project.name.replace("-", "_").replace(":", "")}"
+        }
+    }
+}

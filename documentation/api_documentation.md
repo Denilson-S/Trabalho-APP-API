@@ -1,15 +1,15 @@
 # Documentação da API - Quizz App
 
-Esta API fornece o backend para o aplicativo Quizz App, gerenciando autenticação, perguntas e histórico de pontuação.
+Esta API fornece o backend para o aplicativo Quizz Master, gerenciando autenticação, perguntas e persistência do histórico de partidas.
 
 ## 🚀 Tecnologias Utilizadas
 
-- **Runtime:** Node.js
+- **Runtime:** Node.js (v20-alpine)
 - **Framework:** Express.js
 - **Banco de Dados:** PostgreSQL
-- **Autenticação:** JWT (JSON Web Tokens) e Google OAuth 2.0
-- **Criptografia:** Bcrypt.js
-- **AI Integrada:** Google Generative AI (Gemini) para geração de perguntas (scripts de seed).
+- **Autenticação:** JWT (Access Token de 5m e Refresh Token de 24h) e Google OAuth 2.0
+- **Criptografia:** Bcryptjs
+- **AI Integrada:** Google Generative AI (Gemini) utilizada em scripts de seed para geração de carga de dados.
 
 ---
 
@@ -32,11 +32,11 @@ A maioria dos endpoints requer um token JWT enviado no cabeçalho `Authorization
   {
     "accessToken": "...",
     "refreshToken": "...",
-    "user": { "name": "...", "email": "..." }
+    "user": { "name": "...", "email": "...", "score": 0 }
   }
   ```
 
-### 2. Login
+### 2. Login Tradicional
 **Endpoint:** `POST /api/auth/login`
 - **Corpo da Requisição:**
   ```json
@@ -45,48 +45,21 @@ A maioria dos endpoints requer um token JWT enviado no cabeçalho `Authorization
     "password": "senha_segura"
   }
   ```
-- **Resposta (200):**
-  ```json
-  {
-    "accessToken": "...",
-    "refreshToken": "...",
-    "user": { "name": "...", "email": "..." }
-  }
-  ```
+- **Resposta (200):** Semelhante ao registro.
 
-### 3. Atualizar Token (Refresh)
-**Endpoint:** `POST /api/auth/refresh`
-- **Corpo da Requisição:**
-  ```json
-  {
-    "refreshToken": "..."
-  }
-  ```
-- **Resposta (200):**
-  ```json
-  {
-    "accessToken": "...",
-    "refreshToken": "..."
-  }
-  ```
-
-### 4. Login com Google
+### 3. Login com Google
 **Endpoint:** `POST /api/auth/google`
-- **Corpo da Requisição:**
-  ```json
-  {
-    "idToken": "TOKEN_DO_GOOGLE_OAUTH"
-  }
-  ```
-- **Resposta (200):** Semelhante ao login padrão.
+- **Corpo da Requisição:** `{ "idToken": "..." }`
+- **Nota:** Cria o usuário automaticamente se ele não existir no banco.
+
+### 4. Atualizar Token (Refresh)
+**Endpoint:** `POST /api/auth/refresh`
+- **Corpo da Requisição:** `{ "refreshToken": "..." }`
+- **Resposta (200):** Retorna um novo par de `accessToken` e `refreshToken`.
 
 ### 5. Logout
 **Endpoint:** `POST /api/auth/logout`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
-- **Resposta (200):**
-  ```json
-  { "message": "Logout realizado com sucesso." }
-  ```
+- **Ação:** Remove o `user_refresh_token` do banco de dados, invalidando a sessão.
 
 ---
 
@@ -94,48 +67,30 @@ A maioria dos endpoints requer um token JWT enviado no cabeçalho `Authorization
 
 ### 1. Listar Categorias
 **Endpoint:** `GET /api/categories`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
-- **Resposta (200):** `["Ciência", "História", "Tecnologia", ...]`
+- **Resposta (200):** `["Cinema", "Geography", "History", ...]`
 
 ### 2. Buscar Perguntas
 **Endpoint:** `GET /api/quizzes`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
 - **Parâmetros de Consulta (Opcionais):**
   - `category`: Filtrar por categoria.
-  - `level`: Filtrar por dificuldade (ex: Fácil, Médio, Difícil).
+  - `level`: 'Easy', 'Medium' ou 'Hard'.
   - `limit`: Quantidade de perguntas (Padrão: 10).
-- **Cabeçalho Adicional (Opcional):** `accept-language` (Padrão: `pt-br`).
-- **Resposta (200):**
-  ```json
-  [
-    {
-      "quiz_id": 1,
-      "quiz_level": "Fácil",
-      "quiz_category": "Geral",
-      "quiz_language": "pt-br",
-      "quiz_question": "Qual a capital do Brasil?",
-      "quiz_option_i": "Rio de Janeiro",
-      "quiz_option_ii": "São Paulo",
-      "quiz_option_iii": "Brasília",
-      "quiz_answer": "Brasília"
-    }
-  ]
-  ```
+- **Cabeçalho:** `accept-language` (Padrão: `pt-br`) para definir o idioma das perguntas.
+- **Lógica:** Retorna perguntas aleatórias que o usuário ainda **não respondeu**.
 
 ### 3. Criar Pergunta (Admin)
 **Endpoint:** `POST /api/quizzes`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
 - **Corpo da Requisição:**
   ```json
   {
-    "level": "Difícil",
-    "category": "Matemática",
+    "level": "Hard",
+    "category": "Cinema",
     "language": "pt-br",
-    "question": "Pergunta aqui?",
-    "option1": "Opção A",
-    "option2": "Opção B",
-    "option3": "Opção C",
-    "answer": "Opção B"
+    "question": "Pergunta?",
+    "option1": "Incorreta 1",
+    "option2": "Incorreta 2",
+    "option3": "Incorreta 3",
+    "answer": "Correta"
   }
   ```
 
@@ -143,74 +98,60 @@ A maioria dos endpoints requer um token JWT enviado no cabeçalho `Authorization
 
 ## 📜 Histórico e Pontuação
 
-### 1. Salvar Resultado de Partida
+### 1. Salvar Resultado de Partida (Lote)
 **Endpoint:** `POST /api/history`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
-- **Corpo da Requisição:**
+- **Corpo da Requisição:** Um array de registros de cada pergunta respondida:
   ```json
-  {
-    "quizId": 1,
-    "startTime": "2023-10-27T10:00:00Z",
-    "endTime": "2023-10-27T10:05:00Z",
-    "quantResp": 1,
-    "quantCorrect": 1,
-    "score": 100
-  }
+  [
+    {
+      "quizId": 1,
+      "startTime": "2026-04-22T10:00:00Z",
+      "endTime": "2026-04-22T10:00:10Z",
+      "score": 10
+    }
+  ]
   ```
-- **Resposta (201):** Confirmação da gravação e atualização da pontuação do usuário.
+- **Lógica:** Salva cada registro e incrementa o `user_score` total do usuário.
 
 ### 2. Obter Histórico do Usuário
 **Endpoint:** `GET /api/history`
-- **Cabeçalho:** `Authorization: Bearer <accessToken>`
-- **Resposta (200):** Lista de partidas anteriores com detalhes de data, pontuação e categoria.
+- **Resposta (200):** Uma lista de listas, onde cada sub-lista representa uma partida (agrupada por horário de início).
 
 ---
 
 ## 🗄️ Estrutura do Banco de Dados
 
 ### Tabela `users`
-| Coluna | Tipo | Descrição |
-| :--- | :--- | :--- |
-| `user_id` | SERIAL | Chave Primária |
-| `user_name` | VARCHAR | Nome do usuário |
-| `user_email` | VARCHAR | Email único |
-| `user_password` | VARCHAR | Senha (Hashed) |
-| `user_refresh_token` | VARCHAR | Token para renovação de sessão |
-| `user_score` | INT | Pontuação total acumulada |
+| Coluna | Descrição |
+| :--- | :--- |
+| `user_id` | Chave Primária. |
+| `user_name` | Nome do usuário. |
+| `user_email` | Email único. |
+| `user_password` | Hash da senha. |
+| `user_score` | Pontuação total acumulada. |
 
 ### Tabela `quizzes`
-| Coluna | Tipo | Descrição |
-| :--- | :--- | :--- |
-| `quiz_id` | SERIAL | Chave Primária |
-| `quiz_level` | VARCHAR | Dificuldade |
-| `quiz_category` | VARCHAR | Categoria |
-| `quiz_language` | VARCHAR | Idioma da pergunta |
-| `quiz_question` | VARCHAR | O enunciado da pergunta |
-| `quiz_option_I` | VARCHAR | Opção 1 |
-| `quiz_option_II` | VARCHAR | Opção 2 |
-| `quiz_option_III` | VARCHAR | Opção 3 |
-| `quiz_answer` | VARCHAR | Resposta correta (deve ser uma das opções) |
+| Coluna | Descrição |
+| :--- | :--- |
+| `quiz_level` | Easy, Medium ou Hard. |
+| `quiz_category` | Categoria da pergunta. |
+| `quiz_language` | Idioma (pt-br, en-us, es-es). |
+| `quiz_option_I/II/III` | Opções incorretas. |
+| `quiz_answer` | Opção correta. |
 
 ### Tabela `history`
-| Coluna | Tipo | Descrição |
-| :--- | :--- | :--- |
-| `history_id` | SERIAL | Chave Primária |
-| `user_id` | INT | FK para `users` |
-| `quiz_id` | INT | FK para `quizzes` |
-| `start_time` | TIMESTAMP | Início da partida |
-| `end_time` | TIMESTAMP | Fim da partida |
-| `quant_resp` | INT | Questões respondidas |
-| `quant_correct` | INT | Questões acertadas |
-| `score` | INT | Pontos ganhos na partida |
+| Coluna | Descrição |
+| :--- | :--- |
+| `user_id` | FK para o usuário. |
+| `quiz_id` | FK para a pergunta. |
+| `score` | Pontos obtidos na resposta. |
 
 ---
 
 ## 🛠️ Configuração de Ambiente (`.env`)
-
-A API espera as seguintes variáveis de ambiente:
-
 ```env
 PORT=5000
+TZ=UTC
 DB_HOST=...
 DB_PORT=5432
 DB_USER=...

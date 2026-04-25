@@ -1,4 +1,7 @@
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+
+process.env.TZ = process.env.TZ || 'UTC';
 
 const express = require('express');
 const routes = require('./routes');
@@ -11,5 +14,5 @@ app.use('/api', routes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`✅ API do Quizz rodando na porta: ${PORT}`);
+    console.log(`✅ API do Quizz rodando na porta: ${PORT} (Timezone: ${process.env.TZ})`);
 });

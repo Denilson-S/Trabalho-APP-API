@@ -1,3 +1,4 @@
+import 'package:app_quizz/constants/app_styles.dart';
 import 'package:flutter/material.dart';
 
 class SecondaryButton extends StatelessWidget {
@@ -13,7 +14,7 @@ class SecondaryButton extends StatelessWidget {
       width: double.infinity,
       child: OutlinedButton(
         onPressed: onPressed,
-        child: child ?? Text(text ?? ''),
+        child: child ?? Text(text ?? '', style: AppStyles.option),
       ),
     );
   }

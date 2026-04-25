@@ -1,16 +1,19 @@
+import 'package:isar/isar.dart';
+
+part 'player_model.g.dart';
+
+@collection
 class PlayerModel {
+  Id id = 0;
   String? name;
   String? email;
   int? score;
-  int level = 0;
   int? totalQuizzes;
-  int? totalQuizzesAproved;
 
   PlayerModel({
     this.name,
     this.email,
     this.score,
     this.totalQuizzes,
-    this.totalQuizzesAproved,
   });
 }

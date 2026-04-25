@@ -1,15 +1,14 @@
-import 'package:app_quizz/constants/app_defines.dart';
+import 'package:app_quizz/services/http_service.dart';
 import 'package:dio/dio.dart';
 
 class AuthService {
-  final String apiUrl = AppDefines.apiUrl;
-  final Dio _dio = Dio();
+  final HttpService _http = HttpService();
 
-  Future<Map<String, dynamic>> login(String username, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final response = await _dio.post('$apiUrl/login',
+      final response = await _http.post('/auth/login',
         data: {
-          'username': username,
+          'email': email,
           'password': password,
         },
       );
@@ -17,26 +16,43 @@ class AuthService {
         response.data['success'] = true;
         return response.data;
       }
+    }on DioException catch (e) {
+      // Captura o erro da API para ver o motivo da recusa
+      print('Login Falhou - Status: ${e.response?.statusCode}');
+      print('Detalhes: ${e.response?.data}');
     } catch (e) {
-      print('Error: $e');
-      return {'success': false};
+      print('Login Error: $e');
+      
     }
     return {'success': false};
   }
 
-  Future<Map<String, dynamic>?> refreshToken(String token) async {
+  Future<Map<String, dynamic>> register(String name, String email, String password) async {
     try {
-      final response = await _dio.post('$apiUrl/refresh-token',
+      final response = await _http.post('/auth/register',
         data: {
-          'token': token,
+          'name': name,
+          'email': email,
+          'password': password,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
+        response.data['success'] = true;
         return response.data;
       }
     } catch (e) {
-      print('Error: $e');
+      print('Register Error: $e');
     }
-    return null;
+    return {'success': false};
+  }
+
+  Future<bool> logout() async {
+    try {
+      final response = await _http.post('/auth/logout');
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Logout Error: $e');
+      return false;
+    }
   }
 }

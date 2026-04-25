@@ -1,88 +1,61 @@
+import 'package:isar/isar.dart';
+
+part 'quizz_model.g.dart';
+
+@collection
 class QuizzModel {
-  /// Propriedades intrínsecas ao model
-  final String type;
-  final String category;
-  final String difficulty;
-  final List<Question> questions;
-
-  /// Controle de progresso
-  int? totalQuestions;
-  int? progress = 0;
-
-  /// Controle de tempo
-  DateTime? startAt;
-  DateTime? endAt;
+  Id id = 0;
+  String? category;
+  String? difficulty;
+  List<Question>? questions;
 
   QuizzModel({
-    required this.type,
-    required this.category,
-    required this.difficulty,
-    required this.questions,
+    this.category,
+    this.difficulty,
+    this.questions,
   });
 
-  /// Grava o início do quiz
-  void start() {
-    startAt = DateTime.now();
-  }
-
-  /// Grava o fim do quiz
-  void end() {
-    endAt = DateTime.now();
-  }
-
-  /// Retorna o tempo decorrido do quiz
-  String? time() {
-    if (startAt != null && endAt != null) {
-      int duration = endAt!.difference(startAt!).inSeconds;
-
-      int days = duration ~/ 86400;
-      int hours = (duration % 86400) ~/ 3600;
-      int minutes = (duration % 3600) ~/ 60;
-      int seconds = duration % 60;
-
-      List<String> parts = [];
-
-      if (days > 0) parts.add('${days}d');
-      if (hours > 0) parts.add('${hours}h');
-      if (minutes > 0) parts.add('${minutes}m');
-      if (seconds > 0) parts.add('${seconds}s');
-
-      if (parts.isEmpty) parts.add('0s');
-
-      return parts.join(' ');
+  factory QuizzModel.fromJson(List<dynamic> jsonList) {
+    if (jsonList.isEmpty) {
+      throw ArgumentError('JSON list is empty');
     }
-
-    return null;
-  }
-
-  factory QuizzModel.fromJson(Map<String, dynamic> json) {
     return QuizzModel(
-      type: json['results'][0]['type'],
-      category: json['results'][0]['category'],
-      difficulty: json['results'][0]['difficulty'],
+      category: jsonList[0]['quiz_category'],
+      difficulty: jsonList[0]['quiz_level'],
       questions: List<Question>.from(
-        json['results'].map((q) => Question.fromJson(q)),
+        jsonList.map((q) => Question.fromJson(q)),
       ),
     );
   }
 }
 
+@embedded
 class Question {
-    final String question;
-    final List<String> options;
-    final String answer;
+  int? quizId;
+  String? question;
+  List<String>? options;
+  String? answer;
+  int score;
 
-    Question({
-      required this.question,
-      required this.options,
-      required this.answer,
-    });
+  Question({
+    this.quizId,
+    this.question,
+    this.options,
+    this.answer,
+    this.score = 0,
+  });
 
-    factory Question.fromJson(Map<String, dynamic> json) {
-      return Question(
-        question: json['question'],
-        options: List<String>.from(json['incorrect_answers']),
-        answer: json['correct_answer'],
-      );
-    }
+  factory Question.fromJson(Map<String, dynamic> json) {
+    return Question(
+      quizId: json['quiz_id'],
+      question: json['quiz_question'],
+      options: List<String>.from([
+        json['quiz_option_i'], 
+        json['quiz_option_ii'], 
+        json['quiz_option_iii'], 
+        json['quiz_answer']
+      ]),
+      answer: json['quiz_answer'],
+    );
   }
+}

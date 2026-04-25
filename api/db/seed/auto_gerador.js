@@ -38,9 +38,11 @@ async function gerarCargaTotal() {
                 // Pedimos à IA para ser criativa e não repetir perguntas dos lotes anteriores
                 const prompt = `Atue como um especialista em criação de quiz. Crie ${perguntasPorLote} perguntas INÉDITAS, altamente criativas e de alta qualidade da categoria ${category} nível ${level}. 
                 Evite as perguntas mais clichês.
+                IMPORTANTE: As opções "opt1", "opt2" e "opt3" DEVEM ser distratores (respostas INCORRETAS) e a opção "ans" DEVE ser a resposta CORRETA. 
+                Não repita a resposta correta dentro das opções de distratores.
                 Retorne APENAS um array JSON válido, sem usar marcações markdown como \`\`\`json. O formato DEVE ser rigorosamente este:
                 [
-                  {"category": "${category}", "level": "${level}", "pt-br": {"q": "pergunta", "opt1": "f1", "opt2": "f2", "opt3": "f3", "ans": "certa"}, "en-us": {"q": "question", "opt1": "f1", "opt2": "f2", "opt3": "f3", "ans": "correct"}, "es-es": {"q": "pregunta", "opt1": "f1", "opt2": "f2", "opt3": "f3", "ans": "correcta"}}
+                  {"category": "${category}", "level": "${level}", "pt-br": {"q": "pergunta", "opt1": "distrator1", "opt2": "distrator2", "opt3": "distrator3", "ans": "certa"}, "en-us": {"q": "question", "opt1": "distractor1", "opt2": "distractor2", "opt3": "distractor3", "ans": "correct"}, "es-es": {"q": "pregunta", "opt1": "distractor1", "opt2": "distractor2", "opt3": "distractor3", "ans": "correcta"}}
                 ]`;
 
                 let success = false;
@@ -86,13 +88,15 @@ async function gerarCargaTotal() {
                         await delay(6000); 
 
                     } catch (error) {
+                        tentativas++; // Mudança 2: Adiciona tentativa para qualquer erro
+                        
                         if (error.message.includes('429')) {
-                            tentativas++;
                             console.log(`   🚦 Cota cheia! O robô vai pausar por 60 segundos (Tentativa ${tentativas}/3)...`);
                             await delay(60000); // Pausa de 1 minuto inteiro na conta grátis
                         } else {
-                            console.error(`   ❌ Erro de JSON (A IA formatou mal). Pulando lote...`, error.message);
-                            break; // Quebrou o JSON, desiste desse lote específico e vai para o próximo
+                            // Em vez de "break", agora ele avisa e tenta de novo!
+                            console.error(`   ❌ Erro de JSON/Conexão. Tentando novamente (${tentativas}/3)...`, error.message);
+                            await delay(2000); // Espera 2 segundos antes de tentar de novo
                         }
                     }
                 }

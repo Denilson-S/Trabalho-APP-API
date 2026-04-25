@@ -5,24 +5,24 @@ class AppThemes {
 
   static final ColorScheme colorDarkScheme = ColorScheme(
     brightness: Brightness.dark,
-    primary: Color(0xFF7A6EFF),
-    onPrimary: Color(0xFFFFFFFF),
-    secondary: Color(0xFF12141D),
-    onSecondary: Color(0xFF8C8E9C),
-    primaryContainer: Color(0xFFFFFFFFF),
-    secondaryContainer: Color(0xFF8C8E9C),
-    tertiaryContainer: Color(0xFF7A6EFF),
-    error: Color(0xFF12141D),
-    onError: Color(0xFFFF2056),
-    surface: Color(0xFF1F2131),
-    onSurface: Color(0xFFFFFFFF),
-    shadow: Color(0xFF000000)
+    primary: AppColors.primary,
+    onPrimary: AppColors.white,
+    secondary: AppColors.grey2,
+    onSecondary: AppColors.white,
+    primaryContainer: AppColors.white,
+    secondaryContainer: AppColors.grey3,
+    tertiaryContainer: AppColors.primary,
+    error: AppColors.grey2,
+    onError: AppColors.onError,
+    surface: AppColors.surfaceInput,
+    onSurface: AppColors.white,
+    shadow: AppColors.black
   );
 
   static final ThemeData darkTheme = ThemeData(
     colorScheme: colorDarkScheme,
     primaryColor: colorDarkScheme.primary,
-    scaffoldBackgroundColor: Color(0xFF05050D),
+    scaffoldBackgroundColor: AppColors.scaffoldDarkBackgroundColor,
 
     appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -47,7 +47,7 @@ class AppThemes {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         backgroundColor: AppColors.surfaceInput,
-        foregroundColor: colorDarkScheme.onSecondary, // Texto e ícone com a cor primária
+        foregroundColor: colorDarkScheme.onSecondary,
         side: BorderSide(color: AppColors.borderInput, width: 2),
         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
         shape: RoundedRectangleBorder(
@@ -95,6 +95,27 @@ class AppThemes {
         borderRadius: BorderRadius.circular(24),
       ),
     ),
+
+    useMaterial3: true,
+  );
+
+  static final ColorScheme colorLightScheme = ColorScheme(
+    brightness: Brightness.light,
+    primary: AppColors.primary,
+    onPrimary: AppColors.white,
+    secondary: AppColors.grey2,
+    onSecondary: AppColors.grey3,
+    primaryContainer: AppColors.white,
+    secondaryContainer: AppColors.grey3,
+    tertiaryContainer: AppColors.primary,
+    error: AppColors.grey2,
+    onError: AppColors.onError,
+    surface: AppColors.surfaceInput,
+    onSurface: AppColors.white,
+    shadow: AppColors.black
+  );
+
+  static final ThemeData lightTheme = ThemeData(
 
     useMaterial3: true,
   );
