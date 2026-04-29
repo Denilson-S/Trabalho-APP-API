@@ -57,8 +57,8 @@ class HttpService {
     switch (language) {
       case 'Portuguese': return 'pt-br';
       case 'Spanish': return 'es-es';
-      case 'English': 
-      default: return 'en-us';
+      case 'English': return 'en-us';
+      default: return 'pt-br';
     }
   }
 

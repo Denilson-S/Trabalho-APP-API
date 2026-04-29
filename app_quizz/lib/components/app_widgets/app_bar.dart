@@ -19,7 +19,7 @@ class CustomAppBar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Hello,', style: AppStyles.caption),
-            Text(name, style: AppStyles.titleSmall),
+            Text(name, style: AppStyles.titleSmall, overflow: TextOverflow.ellipsis),
           ],
         ),
       ],

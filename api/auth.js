@@ -144,7 +144,7 @@ const googleLogin = async (req, res) => {
         res.status(200).json({ 
             accessToken, 
             refreshToken, 
-            user: { name: user.user_name, email: user.user_email } 
+            user: { name: user.user_name, email: user.user_email, score: user.user_score } 
         });
 
     } catch (error) {
