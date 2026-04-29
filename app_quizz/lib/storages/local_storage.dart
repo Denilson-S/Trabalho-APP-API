@@ -1,3 +1,4 @@
+import 'package:app_quizz/models/history_model.dart';
 import 'package:app_quizz/models/player_model.dart';
 import 'package:app_quizz/models/settings_model.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,6 +20,7 @@ class LocalStorage {
       [
         PlayerModelSchema,
         SettingsModelSchema,
+        HistoryModelSchema,
       ],
       directory: dir.path,
     );
@@ -27,6 +29,14 @@ class LocalStorage {
   // Isar Abstrações
   Future<T> writeTxn<T>(Future<T> Function() callback) async {
     return await isar.writeTxn(callback);
+  }
+
+  Future<T> readTxn<T>(Future<T> Function() callback) async {
+    return await isar.txn(callback);
+  }
+
+  Future<void> clearAll() async {
+    await isar.writeTxn(() => isar.clear());
   }
 
   // Secure Storage Abstrações

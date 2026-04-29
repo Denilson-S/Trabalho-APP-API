@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
           title: 'Quiz Master',
           themeMode: currentTheme,
           darkTheme: AppThemes.darkTheme,
-          initialRoute: AppRoutes.login,
+          initialRoute: AppRoutes.splash,
           routes: AppRoutes.routes,
         );
       },

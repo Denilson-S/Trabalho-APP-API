@@ -1,5 +1,7 @@
 import 'package:app_quizz/constants/app_styles.dart';
 import 'package:app_quizz/pages/view_models/settings_view_model.dart';
+import 'package:app_quizz/services/auth_service.dart';
+import 'package:app_quizz/storages/user_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
@@ -13,10 +15,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  final UserStorage _userStorage = UserStorage();
+  final AuthService _authService = AuthService();
+  
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => SettingsViewModel(),
+      create: (context) => SettingsViewModel(context, _authService, _userStorage),
       child: Builder(builder: (context) {
         final viewModel = context.watch<SettingsViewModel>();
         return Scaffold(
@@ -39,9 +44,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   CardOption(
                     rows: [
                       RowOption(
-                        icon: UserAvatar(userName: 'Lucas'),
-                        mainText: 'Lucas', secondaryText: 'lucas@email.com',
-                        trailing: CircleButton(icon: LucideIcons.logOut, onPressed: () => Navigator.of(context).pushNamed('/')),
+                        icon: UserAvatar(userName: viewModel.user?.name ?? 'User'),
+                        mainText: viewModel.user?.name ?? 'User', secondaryText: viewModel.user?.email ?? 'none',
+                        trailing: CircleButton(icon: LucideIcons.logOut, onPressed: () => viewModel.logout(context)),
                       ),
                     ],
                   ),
@@ -50,11 +55,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       RowOption(
                         icon: IconAvatar(icon: LucideIcons.moon, colorIcon: AppColors.primary, colorBackground: AppColors.avatarBackground),
                         mainText: 'Dark Theme', secondaryText: 'Activate night mode',
-                        trailing: Switch(value: true, onChanged: (value) => print(value))
+                        trailing: Switch(value: viewModel.settings?.isDarkMode ?? false, onChanged: viewModel.changeTheme)
                       ),
                       RowOption(
                         icon: IconAvatar(icon: LucideIcons.globe, colorIcon: AppColors.primary, colorBackground: AppColors.avatarBackground),
-                        mainText: 'Language', secondaryText: 'Change language', trailing: DropDownInput(options: ['English', 'Spanish', 'Portuguese'], onChange: (value) => print(value)),
+                        mainText: 'Language', secondaryText: 'Change language', trailing: DropDownInput(options: ['English', 'Spanish', 'Portuguese'], onChange: (value) => viewModel.changeLanguage(value!)),
                       ),
                     ],
                   ),
@@ -63,12 +68,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       RowOption(
                         icon: IconAvatar(icon: LucideIcons.helpCircle, colorIcon: AppColors.primary, colorBackground: AppColors.avatarBackground),
                         mainText: 'Help and Support', secondaryText: 'Help center',
-                        trailing: CircleButton(icon: LucideIcons.chevronRight, onPressed: () => print('Edit pressed'))
+                        trailing: CircleButton(icon: LucideIcons.chevronRight, onPressed: () => viewModel.suport(context))
                       ),
                       RowOption(
                         icon: IconAvatar(icon: LucideIcons.star, colorIcon: AppColors.primary, colorBackground: AppColors.avatarBackground),
                         mainText: 'Rate the App', secondaryText: 'Leave your review',
-                        trailing: CircleButton(icon: LucideIcons.chevronRight, onPressed: () => print('Edit pressed'))
+                        trailing: CircleButton(icon: LucideIcons.chevronRight, onPressed: () => viewModel.rate(context))
                       ),
                     ],
                   ),

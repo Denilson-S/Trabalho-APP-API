@@ -22,29 +22,19 @@ const PlayerModelSchema = CollectionSchema(
       name: r'email',
       type: IsarType.string,
     ),
-    r'level': PropertySchema(
-      id: 1,
-      name: r'level',
-      type: IsarType.long,
-    ),
     r'name': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'name',
       type: IsarType.string,
     ),
     r'score': PropertySchema(
-      id: 3,
+      id: 2,
       name: r'score',
       type: IsarType.long,
     ),
     r'totalQuizzes': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'totalQuizzes',
-      type: IsarType.long,
-    ),
-    r'totalQuizzesAproved': PropertySchema(
-      id: 5,
-      name: r'totalQuizzesAproved',
       type: IsarType.long,
     )
   },
@@ -90,11 +80,9 @@ void _playerModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.email);
-  writer.writeLong(offsets[1], object.level);
-  writer.writeString(offsets[2], object.name);
-  writer.writeLong(offsets[3], object.score);
-  writer.writeLong(offsets[4], object.totalQuizzes);
-  writer.writeLong(offsets[5], object.totalQuizzesAproved);
+  writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.score);
+  writer.writeLong(offsets[3], object.totalQuizzes);
 }
 
 PlayerModel _playerModelDeserialize(
@@ -105,13 +93,11 @@ PlayerModel _playerModelDeserialize(
 ) {
   final object = PlayerModel(
     email: reader.readStringOrNull(offsets[0]),
-    name: reader.readStringOrNull(offsets[2]),
-    score: reader.readLongOrNull(offsets[3]),
-    totalQuizzes: reader.readLongOrNull(offsets[4]),
-    totalQuizzesAproved: reader.readLongOrNull(offsets[5]),
+    name: reader.readStringOrNull(offsets[1]),
+    score: reader.readLongOrNull(offsets[2]),
+    totalQuizzes: reader.readLongOrNull(offsets[3]),
   );
   object.id = id;
-  object.level = reader.readLong(offsets[1]);
   return object;
 }
 
@@ -125,14 +111,10 @@ P _playerModelDeserializeProp<P>(
     case 0:
       return (reader.readStringOrNull(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
-    case 2:
       return (reader.readStringOrNull(offset)) as P;
+    case 2:
+      return (reader.readLongOrNull(offset)) as P;
     case 3:
-      return (reader.readLongOrNull(offset)) as P;
-    case 4:
-      return (reader.readLongOrNull(offset)) as P;
-    case 5:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -434,60 +416,6 @@ extension PlayerModelQueryFilter
     });
   }
 
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition> levelEqualTo(
-      int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'level',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      levelGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'level',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition> levelLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'level',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition> levelBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'level',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition> nameIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -780,80 +708,6 @@ extension PlayerModelQueryFilter
       ));
     });
   }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'totalQuizzesAproved',
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'totalQuizzesAproved',
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'totalQuizzesAproved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'totalQuizzesAproved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedLessThan(
-    int? value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'totalQuizzesAproved',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterFilterCondition>
-      totalQuizzesAprovedBetween(
-    int? lower,
-    int? upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'totalQuizzesAproved',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension PlayerModelQueryObject
@@ -873,18 +727,6 @@ extension PlayerModelQuerySortBy
   QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> sortByEmailDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'email', Sort.desc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> sortByLevel() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'level', Sort.asc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> sortByLevelDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'level', Sort.desc);
     });
   }
 
@@ -924,20 +766,6 @@ extension PlayerModelQuerySortBy
       return query.addSortBy(r'totalQuizzes', Sort.desc);
     });
   }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy>
-      sortByTotalQuizzesAproved() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalQuizzesAproved', Sort.asc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy>
-      sortByTotalQuizzesAprovedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalQuizzesAproved', Sort.desc);
-    });
-  }
 }
 
 extension PlayerModelQuerySortThenBy
@@ -963,18 +791,6 @@ extension PlayerModelQuerySortThenBy
   QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> thenByLevel() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'level', Sort.asc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy> thenByLevelDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'level', Sort.desc);
     });
   }
 
@@ -1014,20 +830,6 @@ extension PlayerModelQuerySortThenBy
       return query.addSortBy(r'totalQuizzes', Sort.desc);
     });
   }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy>
-      thenByTotalQuizzesAproved() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalQuizzesAproved', Sort.asc);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QAfterSortBy>
-      thenByTotalQuizzesAprovedDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'totalQuizzesAproved', Sort.desc);
-    });
-  }
 }
 
 extension PlayerModelQueryWhereDistinct
@@ -1036,12 +838,6 @@ extension PlayerModelQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'email', caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<PlayerModel, PlayerModel, QDistinct> distinctByLevel() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'level');
     });
   }
 
@@ -1063,13 +859,6 @@ extension PlayerModelQueryWhereDistinct
       return query.addDistinctBy(r'totalQuizzes');
     });
   }
-
-  QueryBuilder<PlayerModel, PlayerModel, QDistinct>
-      distinctByTotalQuizzesAproved() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'totalQuizzesAproved');
-    });
-  }
 }
 
 extension PlayerModelQueryProperty
@@ -1083,12 +872,6 @@ extension PlayerModelQueryProperty
   QueryBuilder<PlayerModel, String?, QQueryOperations> emailProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'email');
-    });
-  }
-
-  QueryBuilder<PlayerModel, int, QQueryOperations> levelProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'level');
     });
   }
 
@@ -1107,13 +890,6 @@ extension PlayerModelQueryProperty
   QueryBuilder<PlayerModel, int?, QQueryOperations> totalQuizzesProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totalQuizzes');
-    });
-  }
-
-  QueryBuilder<PlayerModel, int?, QQueryOperations>
-      totalQuizzesAprovedProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'totalQuizzesAproved');
     });
   }
 }

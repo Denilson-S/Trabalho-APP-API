@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Classpath removed
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -15,6 +25,18 @@ subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
+
+// 1. ADICIONAMOS A REGRA AQUI: Força a versão 36 ANTES de o projeto ser avaliado!
+subprojects {
+    afterEvaluate {
+        val androidExt = extensions.findByName("android") as? com.android.build.gradle.BaseExtension
+        if (androidExt != null) {
+            androidExt.compileSdkVersion(36)
+        }
+    }
+}
+
+// 2. Agora sim ele pode avaliar o app tranquilamente
 subprojects {
     project.evaluationDependsOn(":app")
 }

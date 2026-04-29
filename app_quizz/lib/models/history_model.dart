@@ -5,30 +5,26 @@ part 'history_model.g.dart';
 
 @collection
 class HistoryModel {
-  Id id = 0;
-  final String level;
-  final String category;
+  Id id = Isar.autoIncrement;
+  int userId;
   DateTime? startTime;
   DateTime? endTime;
+  String? category;
+  String? level;
   int score = 0;
-  int totalQuestions = 0;
-  int correctQuestions = 0;
-  final List<int>? quizzes_ids;
+  QuizzModel? quizz;
 
   HistoryModel({
-    required this.level,
-    required this.category,
+    required this.userId,
     required this.startTime,
     required this.endTime,
-    this.quizzes_ids,
+    this.quizz,
+    this.category,
+    this.level,
   });
 
-  void startQuiz() {
-    startTime = DateTime.now();
-  }
-
-  void endQuiz() {
-    endTime = DateTime.now();
+  void endQuiz(String option, int points) {
+    if (option == quizz?.answer) score = points;
   }
 
   String time(){
@@ -39,25 +35,22 @@ class HistoryModel {
     return 'N/A';
   }
 
-  List<dynamic> toJson() {
-    return [
-      quizzes?.map((q) => q.toJson())
-    ];
+  Map<String, dynamic> toJson() {
+    return {
+      "quizId": quizz?.id,
+      "startTime": startTime?.toIso8601String(),
+      "endTime": endTime?.toIso8601String(),
+      "score": score
+    };
   }
 
-  factory HistoryModel.fromJson(List<dynamic> json) {
+  factory HistoryModel.fromJson(dynamic json) {
     return HistoryModel(
-      level: json[0][0]['level'] as String,
-      category: json[0][0]['category'] as String,
-      startTime: json[0][0]['startTime'] != null
-          ? DateTime.parse(json[0][0]['startTime'] as String)
-          : null,
-      endTime: json[0][0]['endTime'] != null
-          ? DateTime.parse(json[0][0]['endTime'] as String)
-          : null,
-      quizzes: (json['quizzes'] as List<dynamic>?)
-          ?.map((q) => QuizzModel.fromJson(q as Map<String, dynamic>))
-          .toList(),
-    );
+      userId: json['user_id'],
+      startTime: json['start_time'] != null ? DateTime.parse(json['start_time']) : null,
+      endTime: json['end_time'] != null ? DateTime.parse(json['end_time']) : null,
+      category: json['quiz_category'],
+      level: json['quiz_level'],
+    )..score = json['score'] ?? 0;
   }
 }

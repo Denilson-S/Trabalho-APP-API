@@ -25,7 +25,7 @@ class HttpService {
           options.headers['Authorization'] = 'Bearer $token';
         }
 
-        // 2. Injeta Idioma preferido do usuário automaticamente
+        // 2. Injeta Idioma selcionado pelo usuário automaticamente
         final settings = await _userStorage.getSettings();
         // Converte o nome do idioma para o código esperado pela API (ex: 'Portuguese' -> 'pt-br')
         final langCode = _mapLanguageToCode(settings.language);
@@ -56,9 +56,9 @@ class HttpService {
   String _mapLanguageToCode(String language) {
     switch (language) {
       case 'Portuguese': return 'pt-br';
-      case 'Spanish': return 'es';
+      case 'Spanish': return 'es-es';
       case 'English': 
-      default: return 'en';
+      default: return 'en-us';
     }
   }
 

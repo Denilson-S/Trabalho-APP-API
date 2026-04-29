@@ -46,6 +46,23 @@ class AuthService {
     return {'success': false};
   }
 
+  Future<Map<String, dynamic>> googleLogin(String idToken) async {
+    try {
+      final response = await _http.post('/auth/google',
+        data: {
+          'idToken': idToken,
+        },
+      );
+      if (response.statusCode == 200) {
+        response.data['success'] = true;
+        return response.data;
+      }
+    } catch (e) {
+      print('Google Login Error: $e');
+    }
+    return {'success': false};
+  }
+
   Future<bool> logout() async {
     try {
       final response = await _http.post('/auth/logout');

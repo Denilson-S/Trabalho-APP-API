@@ -1,8 +1,5 @@
 import 'package:app_quizz/components/app_widgets/navigation_bar.dart';
-import 'package:app_quizz/pages/view_models/dashboard_view_model.dart';
-import 'package:app_quizz/pages/view_models/history_view_model.dart';
 import 'package:app_quizz/pages/view_models/home_view_model.dart';
-import 'package:app_quizz/pages/view_models/settings_view_model.dart';
 import 'package:app_quizz/pages/views/dashboard_page.dart';
 import 'package:app_quizz/pages/views/history_page.dart';
 import 'package:app_quizz/pages/views/settings_page.dart';
@@ -46,18 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 viewModel.setIndex(index); 
               },
               children: [
-                ChangeNotifierProvider(
-                  create: (_) => DashboardViewModel(),
-                  child: const DashboardPage(),
-                ),
-                ChangeNotifierProvider(
-                  create: (_) => HistoryViewModel(),
-                  child: const HistoryPage(),
-                ),
-                ChangeNotifierProvider(
-                  create: (_) => SettingsViewModel(),
-                  child: const SettingsPage(),
-                ),
+                const DashboardPage(),
+                const HistoryPage(),
+                const SettingsPage(),
               ],
             ),
             bottomNavigationBar: CustomNavigationBar(pageController: _pageController, viewModel: viewModel)

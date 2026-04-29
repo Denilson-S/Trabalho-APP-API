@@ -21,12 +21,6 @@ class RegisterPageState extends State<RegisterPage> {
   final AuthService _authService = AuthService();
 
   @override
-  void dispose() {
-    context.read<LoginViewModel>().dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => LoginViewModel(context, _authService, _userStorage),

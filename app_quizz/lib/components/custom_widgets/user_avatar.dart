@@ -11,7 +11,7 @@ class UserAvatar extends StatelessWidget {
     return CircleAvatar(
       radius: 24,
       backgroundColor: AppColors.primary,
-      child: Text(userName[0], style: AppStyles.titleMedium),
+      child: Text(userName[0], style: AppStyles.titleMedium, overflow: TextOverflow.ellipsis),
     );
   }
 }
